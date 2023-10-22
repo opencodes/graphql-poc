@@ -16,6 +16,17 @@ class Product {
 const productData = {};
 
 export const resolvers = {
+  getProductList: () => {
+    return new Promise((resolve, reject) => {
+      WidgetModel.find().then((doc) => {
+        if (doc) {
+          resolve(doc);
+        } else {
+          reject(new Error("Product not found"));
+        }
+      });
+    });
+  },
   getProduct: ({ id }) => {
     return new Promise((resolve, reject) => {
       WidgetModel.findById(id).then((doc) => {
@@ -49,6 +60,56 @@ export const resolvers = {
         .catch((err) => {
           reject(err);
         });
+    });
+  },
+  updateProduct: ({ input }) => {
+    console.log(input);
+    const updates = {};
+    if (input.name) {
+      updates.name = input.name;
+    }
+    if (input.description) {
+      updates.description = input.description;
+    }
+    if (input.price) {
+      updates.price = input.price;
+    }
+    if (input.inventory) {
+      updates.inventory = input.inventory;
+    }
+    if (input.soldout) {
+      updates.soldout = input.soldout;
+    }
+    if (input.stores) {
+      updates.stores = input.stores;
+    }
+    console.log(updates);
+
+    return new Promise((resolve, reject) => {
+      console.log(updates);
+      WidgetModel.findByIdAndUpdate(input.id, updates, { new: true })
+        .then((doc) => {
+          if (doc) {
+            console.log(doc);
+            resolve(new Product(doc._id, doc));
+          } else {
+            reject(new Error("Product not found"));
+          }
+        })
+        .catch((err) => reject(err));
+    });
+  },
+  deleteProduct: ({ id }) => {
+    return new Promise((resolve, reject) => {
+      WidgetModel.findByIdAndDelete(id)
+        .then((doc) => {
+          if (doc) {
+            resolve("Product deleted successfully");
+          } else {
+            reject(new Error("Product not found"));
+          }
+        })
+        .catch((err) => reject(err));
     });
   },
 };
