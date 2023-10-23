@@ -1,32 +1,80 @@
 // import express from "express";
 // import { graphqlHTTP } from "express-graphql";
-import schema from "./app/data/schema";
-import { resolvers } from "./app/data/resolvers";
-import { ApolloServer } from "apollo-server";
+// import { typeDefs } from "./app/data/schema";
+import { resolver } from "./app/data/resolvers";
+import { ApolloServer, gql } from "apollo-server";
+import WidgetModel from "./app/data/dbconnection";
+// Create a Mongoose model for the "Book" schema
 
-// const app = express();
+// Define your GraphQL schema
+const typeDefs = gql`
+  type Product {
+    id: ID
+    name: String
+    description: String
+    price: Float
+    soldout: Soldout
+    inventory: Int
+    stores: [Store]!
+  }
+  enum Soldout {
+    SOLDOUT
+    ONSALE
+  }
+  type Store {
+    store: String
+  }
+  input StoreInput {
+    store: String
+  }
+  input ProductInput {
+    id: ID
+    name: String
+    description: String
+    price: Float
+    soldout: Soldout
+    inventory: Int
+    stores: [StoreInput]!
+  }
+  type Query {
+    getProduct(id: ID): Product
+    getProductList: [Product]!
+  }
+  type Mutation {
+    createProduct(input: ProductInput): Product
+    updateProduct(input: ProductInput): Product
+    deleteProduct(id: ID!): String
+  }
+`;
 
-// app.get("/", (req, res) => {
-//   res.send("GraphQL is amazing!");
-// });
-// const root = resolvers;
+// Define resolvers for your schema
+const resolvers = {
+  Query: {
+    getProduct: async (_, { id }) => {
+      return WidgetModel.findById(id);
+    },
+    getProductList: async () => {
+      return WidgetModel.find();
+    },
+  },
+  Mutation: {
+    createProduct: async (_, input) => {
+      return WidgetModel.create(input);
+    },
+    updateProduct: async (_, { id, input }) => {
+      return WidgetModel.findByIdAndUpdate(id, input, { new: true });
+    },
+    deleteProduct: async (_, { id }) => {
+      await WidgetModel.findByIdAndDelete(id);
+      return "Product deleted successfully";
+    },
+  },
+};
 
-// app.use(
-//   "/graphql",
-//   graphqlHTTP({
-//     schema: schema,
-//     rootValue: root,
-//     graphiql: true,
-//   })
-// );
+// Create an Apollo Server instance
+const server = new ApolloServer({ typeDefs, resolvers });
 
-// app.listen(4000, () => {
-//   console.log("Running a GraphQL API server at localhost:4000");
-// });
-const server = new ApolloServer({
-  schema,
-  mocks: true,
-});
+// Start the server
 server.listen({ port: 4000 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+  console.log(`Server running at ${url}`);
 });

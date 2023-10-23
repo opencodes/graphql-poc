@@ -1,6 +1,6 @@
-import { buildSchema } from "graphql";
+import { gql } from "apollo-server";
 
-const schema = buildSchema(`
+export const typeDefs = gql`
   type Product {
     id: ID
     name: String
@@ -39,6 +39,4 @@ const schema = buildSchema(`
     updateProduct(input: ProductInput): Product
     deleteProduct(id: ID!): String
   }
-`);
-
-export default schema;
+`;

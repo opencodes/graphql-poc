@@ -1,4 +1,3 @@
-import { log } from "console";
 import WidgetModel from "./dbconnection";
 
 class Product {
@@ -15,6 +14,31 @@ class Product {
 
 const productData = {};
 
+export const resolver = {
+  Query: {
+    getProductList: () => {
+      return [];
+      // return WidgetModel.find({});
+      // console.log(docs);
+      // if (docs) {
+      //   return docs;
+      // } else {
+      //   return new Error("Product not found");
+      // }
+    },
+    getProduct: async ({ id }) => {
+      const doc = await WidgetModel.findById(id);
+      console.log("--");
+      if (doc) {
+        return doc;
+      } else {
+        return new Error("Product not found");
+      }
+    },
+  },
+};
+
+/**
 export const resolvers = {
   getProductList: () => {
     return new Promise((resolve, reject) => {
@@ -113,3 +137,4 @@ export const resolvers = {
     });
   },
 };
+*/
