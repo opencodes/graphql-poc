@@ -107,3 +107,24 @@ fragment wifgetFragment on Product{
   id
 }
 ```
+
+```
+query ExampleQuery {
+  getProductList {
+    id
+    name
+  }
+  getProduct(id:"6534d063a3f4737f269a6f60") {
+    id
+    name
+    description
+    inventory
+    price
+    stores {
+      store
+    }
+    soldout
+  }
+}
+
+```

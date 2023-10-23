@@ -1,10 +1,5 @@
-// import express from "express";
-// import { graphqlHTTP } from "express-graphql";
-// import { typeDefs } from "./app/data/schema";
-import { resolver } from "./app/data/resolvers";
 import { ApolloServer, gql } from "apollo-server";
 import WidgetModel from "./app/data/dbconnection";
-// Create a Mongoose model for the "Book" schema
 
 // Define your GraphQL schema
 const typeDefs = gql`
